@@ -86,16 +86,20 @@ class Data {
       String category_name;
       String app_cat_icon;
       String category_icon;
+      String cat_big_img;
+      String app_five_icon;
 
       CategoryListModel({ required this.id,  required this.category_name, required this.app_cat_icon,
-          required this.category_icon});
+          required this.category_icon,required this.cat_big_img,required this.app_five_icon});
 
       factory CategoryListModel.fromJson(Map<String, dynamic> json) {
           return CategoryListModel(
               id: json["id"],
               category_name: json["category_name"],
               app_cat_icon: json["app_cat_icon"],
-              category_icon: json["category_icon"]
+              category_icon: json["category_icon"],
+              cat_big_img: json["cat_big_img"],
+              app_five_icon: json["app_five_icon"]
           );
       }
 
@@ -105,6 +109,8 @@ class Data {
           "category_name": category_name,
           "app_cat_icon": app_cat_icon,
           "category_icon": category_icon,
+          "cat_big_img": cat_big_img,
+          "app_five_icon": app_five_icon,
       };
 
   }

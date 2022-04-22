@@ -1,7 +1,7 @@
 class CityListData {
   String type;
   String message;
-  List<Data> data;
+  List<CityData> data;
 
   CityListData({required this.type, required this.message, required this.data});
 
@@ -9,7 +9,7 @@ class CityListData {
     return CityListData(
       type: json["type"],
       message: json["message"],
-      data: List<Data>.from(json["data"].map((x) => Data.fromJson(x))),
+      data: List<CityData>.from(json["data"].map((x) => CityData.fromJson(x))),
     );
   }
 
@@ -22,9 +22,9 @@ class CityListData {
 
 }
 
-class Data {
+class CityData {
 
-  Data({required this.id,
+  CityData({required this.id,
     required this.city,
     required this.city_alias,
     required this.state,
@@ -39,7 +39,7 @@ class Data {
 
 
 
-  factory Data.fromJson(Map<String, dynamic> json) { return  Data(
+  factory CityData.fromJson(Map<String, dynamic> json) { return  CityData(
     id : json['id'],
     city : json['city'],
     city_alias : json['city_alias'],

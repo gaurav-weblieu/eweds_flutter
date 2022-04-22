@@ -4,13 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_vendor_project/city_list_models.dart';
-import 'package:multi_vendor_project/city_list_models.dart';
 import 'package:multi_vendor_project/user.model.dart';
-import 'SharedPref.dart';
+import 'shared_pref.dart';
 import 'api.dart';
-import 'city_list_models.dart';
-import 'city_list_models.dart';
-import 'city_list_models.dart';
 import 'city_list_models.dart';
 import 'main.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +16,6 @@ class UserController extends ChangeNotifier {
   late UserLoginData user;
   late SignupModel signupModel;
   late CategoryListModel categoryListModel;
-
    shared_pref share_pre= new shared_pref();
 
   late CityListData cityListData;
@@ -28,7 +23,6 @@ class UserController extends ChangeNotifier {
 
   Future<bool> login({required String email, required String password,}) async
   {
-
     Response response;
     try {
       response = await Dio().post(
@@ -69,10 +63,11 @@ class UserController extends ChangeNotifier {
     }
 
     try {
-      log(json.encode(response.data), name: "Get Comment List API Data");
+     /* log(json.encode(response.data), name: "Get Comment List API Data");
        this.user= UserLoginData.fromJson(jsonDecode(response.data));
-      if ( await share_pre.setLoginDetails(user.data.elementAt(0).id,user.data.elementAt(0).fname,user.data.elementAt(0).lname,user.data.elementAt(0).email,
-          user.data.elementAt(0).mobileno)) {
+      if ( await share_pre.setLoginDetails(user.data.elementAt(0).id,user.data.elementAt(0).fname,user.data.elementAt(0).lname,
+          user.data.elementAt(0).email,
+          user.data.elementAt(0).mobileno,true)) {
         MyApp.sMKey.currentState!.showSnackBar(SnackBar(content: Text("User Login Successfully!!!")));
         notifyListeners();
         return true;
@@ -81,7 +76,8 @@ class UserController extends ChangeNotifier {
         log('token not saved');
         return false;
 
-      }
+      }*/
+      return false;
 
     } catch (e) {
       log(e.toString(), name: "Get User Details API Exception");
@@ -94,7 +90,7 @@ class UserController extends ChangeNotifier {
 
 
    Future<bool> Signup({required String fname, required String lname,
-     required String con_num, required String email,required String pass,required String gen}) async
+     required String con_num, required String email,required String gen}) async
    {
 
      Response response;
@@ -106,8 +102,7 @@ class UserController extends ChangeNotifier {
            "fname"  : fname,
            "gender"  : gen,
            "lname" : lname,
-           "mobileno" : con_num,
-           "password" :  pass
+           "mobileno" : con_num
          },
          options: Options(
            headers: {
@@ -116,6 +111,7 @@ class UserController extends ChangeNotifier {
            },
          ),
        );
+
        if (response.statusCode != 200) {
          log(response.toString());
          log(response.statusMessage.toString(), name: "Login API Failed");
@@ -131,26 +127,45 @@ class UserController extends ChangeNotifier {
        if (e.response == null) {
          log(e.message.toString(), name: "Login API Error");
          MyApp.sMKey.currentState!
-             .showSnackBar(SnackBar(content: Text("Network not available")));
+             .showSnackBar(const SnackBar(content: Text("Network not available")));
        } else {
          log(e.response!.data.toString(), name: "Login API Error");
          MyApp.sMKey.currentState!
-             .showSnackBar(SnackBar(content: Text("Network not available")));
+             .showSnackBar(const SnackBar(content: Text("Network not available")));
        }
        return false;
      }
 
      try {
        log(json.encode(response.data), name: "Get Comment List API Data");
-       signupModel= SignupModel.fromJson(jsonDecode(response.data));
-       notifyListeners();
-       MyApp.sMKey.currentState!.showSnackBar(SnackBar(content: Text("User Register Successfully!!!")));
+       //signupModel= SignupModel.fromJson(jsonDecode(response.data));
+       log(json.encode(response.data), name: "Get Comment List API Data");
+       var res = jsonDecode(response.data);
+       if (res["status"] == "true") {
+         var data = res["data"];
+         if (await share_pre.setLoginDetails(
+             data["id"],
+             data["fname"],
+             data["lname"],
+             data["email"],
+             data["mobileno"],
+             data["gender"],
+             true
+         )) {
+           MyApp.sMKey.currentState!.showSnackBar(
+               const SnackBar(content: Text("User Login Successfully!!!")));
+           notifyListeners();
+           return true;
+         } else {
+           log('token not saved');
+           return false;
+         }
+       }
        return true;
 
      } catch (e) {
        log(e.toString(), name: "Get User Details API Exception");
-       MyApp.sMKey.currentState!
-           .showSnackBar(SnackBar(content: Text(e.toString())));
+       MyApp.sMKey.currentState!.showSnackBar(SnackBar(content: Text(e.toString())));
        return false;
      }
    }

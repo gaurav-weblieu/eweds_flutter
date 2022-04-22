@@ -3,6 +3,8 @@ import 'package:multi_vendor_project/welcome.dart';
 import 'package:multi_vendor_project/user.controller.dart';
 import 'package:provider/provider.dart';
 
+import 'colors.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -11,8 +13,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static GlobalKey<ScaffoldMessengerState> sMKey =
-  GlobalKey<ScaffoldMessengerState>();
+  static GlobalKey<ScaffoldMessengerState> sMKey = GlobalKey<ScaffoldMessengerState>();
   static GlobalKey<NavigatorState> nKey = GlobalKey<NavigatorState>();
 
   // This widget is the root of your application.
@@ -24,12 +25,10 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => UserController())
         ],
     child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: sMKey,
       navigatorKey: nKey,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home:  WelcomePage(),
     )
 
@@ -55,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Colors.blue,
+        backgroundColor: GetColor.appPrimaryColors,
         title: Text(""),
       ),
       body: Center(
