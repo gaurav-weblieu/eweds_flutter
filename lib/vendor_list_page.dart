@@ -35,6 +35,8 @@ class _vendor_list_pageState extends State<vendor_list_page> {
   var cat_name;
   String? _user_id;
 
+     var index_on_click;
+
 
   _vendor_list_pageState(this.cat_id, this.cat_name);
 
@@ -136,7 +138,7 @@ class _vendor_list_pageState extends State<vendor_list_page> {
                   String url=API.CATEGORY_DETAILS_IMAGE1+item.profilepic;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => vendor_details( url:url,vendor_id: item.email)),
+                    MaterialPageRoute(builder: (context) => vendor_details( url:url,vendor_id: item.email,id: item.id)),
                   );
                 },
                 child: Container(
@@ -161,6 +163,9 @@ class _vendor_list_pageState extends State<vendor_list_page> {
                             GestureDetector(
                               onTap: (){
 
+                                setState(() {
+                                  index_on_click=index;
+                                });
                                 checkLogin().then((value) {
                                   if (value) {
                                     AddWistLsitVendor(item.id,item.category_id);
@@ -175,7 +180,14 @@ class _vendor_list_pageState extends State<vendor_list_page> {
                                 });
 
                               },
-                              child: Container(
+                              child: index_on_click==index ? Container(
+                                margin: EdgeInsets.all(15.0),
+                                child: const Icon(
+                                  Icons.bookmark_add_rounded,
+                                  size: 25,
+                                  color: Colors.red,
+                                ),
+                              ) : Container(
                                 margin: EdgeInsets.all(15.0),
                                 child: const Icon(
                                   Icons.bookmark_border_rounded,

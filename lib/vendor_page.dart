@@ -1,10 +1,7 @@
 import 'dart:convert';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_vendor_project/user.model.dart';
-import 'package:multi_vendor_project/vendor_details.dart';
 import 'package:multi_vendor_project/vendor_list_page.dart';
 import 'package:http/http.dart' as http;
 
@@ -79,7 +76,7 @@ class BodyLayoutState extends State<BodyLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Wedding Catergories",style: TextStyle(fontSize: 16.0),),
+        title: const Text("Wedding Catergories",style: TextStyle(fontSize: 16.0),),
         centerTitle: true,
         elevation: 0.0,
         backgroundColor: GetColor.appPrimaryColors,
@@ -116,7 +113,7 @@ class BodyLayoutState extends State<BodyLayout> {
                         );
                       },
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 10.0),
+                        margin: EdgeInsets.only(bottom: 3.0),
                         child: Stack(
                           children :[
                             ClipRRect(

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_vendor_project/city_list_models.dart';
+import 'package:multi_vendor_project/shared_pref_temp.dart';
 import 'package:multi_vendor_project/user.model.dart';
 import 'shared_pref.dart';
 import 'api.dart';
@@ -19,6 +20,8 @@ class UserController extends ChangeNotifier {
    shared_pref share_pre= new shared_pref();
 
   late CityListData cityListData;
+
+   SharedPrefTemp share_pre_temp= SharedPrefTemp();
 
 
   Future<bool> login({required String email, required String password,}) async
@@ -141,19 +144,21 @@ class UserController extends ChangeNotifier {
        //signupModel= SignupModel.fromJson(jsonDecode(response.data));
        log(json.encode(response.data), name: "Get Comment List API Data");
        var res = jsonDecode(response.data);
-       if (res["status"] == "true") {
+       if (res["error"] == "0") {
          var data = res["data"];
+
+         if (await share_pre_temp.setTempData(data[0]["fname"]+" "+data[0]["lname"], data[0]["email"], data[0]["mobileno"])) {}
+
          if (await share_pre.setLoginDetails(
-             data["id"],
-             data["fname"],
-             data["lname"],
-             data["email"],
-             data["mobileno"],
-             data["gender"],
+             data[0]["id"],
+             data[0]["fname"],
+             data[0]["lname"],
+             data[0]["email"],
+             data[0]["mobileno"],
+             data[0]["gender"],
              true
          )) {
-           MyApp.sMKey.currentState!.showSnackBar(
-               const SnackBar(content: Text("User Login Successfully!!!")));
+           MyApp.sMKey.currentState!.showSnackBar(const SnackBar(content: Text("User Login Successfully!!!")));
            notifyListeners();
            return true;
          } else {

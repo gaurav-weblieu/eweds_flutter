@@ -13,6 +13,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'LoadingOverlay.dart';
 import 'api.dart';
+import 'block/login_bloc.dart';
 import 'colors.dart';
 import 'login_copy.dart';
 import 'login_with_otp_screen.dart';
@@ -101,11 +102,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         FlatButton(
                           textColor: Colors.black,
                           onPressed: () async {
+
                             shared_pref sF = shared_pref();
                             bool? logout = await sF.clearPreferences();
                             if (logout) {
-                              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                                  const LoginWithOtp()), (Route<dynamic> route) => false);
+
+                              LoginBloc loginBloc= LoginBloc();
+                              loginBloc.loginSink.add(true);
+
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+
+
+                              /* Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                  const LoginWithOtp()), (Route<dynamic> route) => false);*/
                               //Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => LoginWithOtp()));
                             }
                           },

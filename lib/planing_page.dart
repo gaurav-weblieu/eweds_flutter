@@ -30,7 +30,7 @@ class _PlaningPageScreenState extends State<PlaningPageScreen> {
       body: Column(
         children: [
 
-          Container(
+         /* Container(
             height: 40.0,
             color: GetColor.appPrimaryColors,
             child: Align(
@@ -59,7 +59,7 @@ class _PlaningPageScreenState extends State<PlaningPageScreen> {
                 ],
               ),
             ),
-          ),
+          ),*/
 
 
           Expanded(
@@ -76,7 +76,6 @@ class _PlaningPageScreenState extends State<PlaningPageScreen> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-
 
                                 Expanded(
                                   child: Column(

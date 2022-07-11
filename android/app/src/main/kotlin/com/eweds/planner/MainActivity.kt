@@ -1,4 +1,4 @@
-package com.example.multi_vendor_project
+package com.eweds.planner
 
 import io.flutter.embedding.android.FlutterActivity
 

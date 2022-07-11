@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'colors.dart';
+
 /// Our custom fork of https://pub.dev/packages/modal_progress_hud adding a fading effect
 ///
 /// wrapper around any widget that makes an async call to show a modal progress
@@ -27,7 +29,7 @@ class LoadingOverlay extends StatefulWidget {
     required this.isLoading,
     required this.child,
     this.opacity = 0.5,
-    this.progressIndicator = const CircularProgressIndicator(),
+    this.progressIndicator = const CircularProgressIndicator(color: GetColor.appPrimaryColors,),
     this.color,
   });
 
@@ -90,7 +92,7 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
             Opacity(
               child: ModalBarrier(
                 dismissible: false,
-                color: widget.color ?? Theme.of(context).colorScheme.background,
+                color: GetColor.appPrimaryColors,
               ),
               opacity: widget.opacity,
             ),

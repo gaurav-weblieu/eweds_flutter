@@ -1,12 +1,46 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:multi_vendor_project/welcome.dart';
 import 'package:multi_vendor_project/user.controller.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'colors.dart';
 
 
-void main() {
+const AndroidNotificationChannel channel= AndroidNotificationChannel(
+    "high_importance_channel", //id
+    "High Importance Notification ", //title
+    importance: Importance.high,
+    playSound: true);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async{
+  await Firebase.initializeApp();
+  print("Bg Message just sowed Up ${message.messageId}");
+
+}
+
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  FirebaseMessaging.onBackgroundMessage( _firebaseMessagingBackgroundHandler);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>()
+  ?.createNotificationChannel(channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true
+  );
+
   runApp(const MyApp());
 }
 
@@ -46,6 +80,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+
+  @override
+  void initState() {
+    FirebaseMessaging.instance.getToken().then((value) {
+      var token = value;
+      print("tkoen////////////////"+token!);
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification?  notification= message.notification;
+      AndroidNotification? androidNotification=message.notification?.android;
+      if(notification != null && androidNotification != null ){
+        flutterLocalNotificationsPlugin.show(notification.hashCode, notification.title, notification.body, NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+            color: Colors.blue,
+            playSound: true,
+            icon: '@mipmap/ic_launcher',
+          ),
+        ));
+      }
+    });
+
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      RemoteNotification?  notification= message.notification;
+      AndroidNotification? androidNotification=message.notification?.android;
+      if(notification != null && androidNotification != null ){
+        showDialog(context: context, builder: (_){
+          return AlertDialog(
+            title: Text(notification.title  ?? "null"),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(notification.body ?? "null")
+                ],
+              ),
+            ),
+          );
+        });
+      }
+    });
+
+  }
+
 
 
   @override

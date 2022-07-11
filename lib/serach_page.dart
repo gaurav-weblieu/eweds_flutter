@@ -644,7 +644,7 @@ class _SearchPageState extends State<SearchPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            vendor_details(url: url, vendor_id: item.email)),
+                            vendor_details(url: url, vendor_id: item.email,id: item.id)),
                   );
                 },
                 child: Container(

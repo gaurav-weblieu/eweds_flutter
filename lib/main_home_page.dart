@@ -3,12 +3,14 @@ import 'dart:developer';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:location/location.dart';
 import 'package:multi_vendor_project/city_select_page.dart';
+import 'package:multi_vendor_project/send_message_home.dart';
 import 'package:multi_vendor_project/serach_page.dart';
 import 'package:multi_vendor_project/shared_pref.dart';
 import 'package:multi_vendor_project/user.controller.dart';
@@ -25,18 +27,17 @@ import 'main.dart';
 import 'search_list_models.dart';
 import 'package:geocoding/geocoding.dart' as geocoding ;
 import 'package:location/location.dart'  as location ;
+import 'package:multi_vendor_project/send_message.dart';
 
 
-
-
-class main_job_page extends StatefulWidget {
-  const main_job_page({Key? key}) : super(key: key);
+class main_home_page extends StatefulWidget {
+  const main_home_page({Key? key}) : super(key: key);
 
   @override
-  _main_job_pageState createState() => _main_job_pageState();
+  _main_home_pageState createState() => _main_home_pageState();
 }
 
-class _main_job_pageState extends State<main_job_page> {
+class _main_home_pageState extends State<main_home_page> {
   @override
   Widget build(BuildContext context) {
     return BodyLayout();
@@ -80,16 +81,20 @@ class BodyLayoutState extends State<BodyLayout> {
   late List<DataVendorList> _allSearchData = [];
   late List<DataVendorList> _allPhotographerData = [];
 
-  String var_city_select = "";
+  String var_city_select = "Noida";
 
   late SearchListData photographerListData;
 
 
   @override
   void initState() {
-    getCityDetails();
-    categoryListModel = fetchCategory();
+    FirebaseMessaging.instance.getToken().then((value) {
+      var token = value;
+      print("tkoen////////////////"+token!);
+
+    });
   }
+
 
   Future<List<CategoryListModel>> fetchCategory() async {
     Uri uri = Uri.parse(API.cate_list);
@@ -127,6 +132,20 @@ class BodyLayoutState extends State<BodyLayout> {
       systemNavigationBarColor: Colors.white
     ));*/
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SendEnqueryHome()),
+          );
+        },
+        label: const Text('Enquiry'),
+        icon: const Icon(Icons.send_rounded),
+        backgroundColor: GetColor.appPrimaryColors,
+      ),
+
       appBar: AppBar(
          systemOverlayStyle: const SystemUiOverlayStyle(
           // Status bar color
@@ -377,9 +396,9 @@ class BodyLayoutState extends State<BodyLayout> {
                 alignment: Alignment.centerLeft,
                 child: Container(
                   margin: const EdgeInsets.only(left: 10.0, top: 10.0),
-                  child: const Text(
-                    'Venue in your City',
-                    style: TextStyle(
+                  child:  Text(
+                    'Venue in '+var_city_select,
+                    style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
@@ -426,8 +445,8 @@ class BodyLayoutState extends State<BodyLayout> {
                 alignment: Alignment.centerLeft,
                 child: Container(
                   margin: const EdgeInsets.only(left: 10.0, top: 10.0),
-                  child: const Text(
-                    'Photographer for you',
+                  child:  Text(
+                    'Photographer in '+var_city_select,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -485,13 +504,15 @@ class BodyLayoutState extends State<BodyLayout> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0),
                   ),
-                )),*/
-            //Flexible(child: _myListView3()),
+                )),
+            Flexible(child: _myListView3()),*/
             Container(
+              height: 150.0,
+              margin: EdgeInsets.all(10.0),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(25.0),
                   child: Image.asset(
-                    "images/banner.png",
+                    "images/banner.jpg",
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.fill,
@@ -637,7 +658,7 @@ class BodyLayoutState extends State<BodyLayout> {
 
   Widget _myListView3() {
     return Container(
-      height: 250.0,
+      height: 270.0,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 5,
@@ -648,7 +669,7 @@ class BodyLayoutState extends State<BodyLayout> {
                 MaterialPageRoute(
                     builder: (context) => vendor_details(
                         url: "null",
-                        vendor_id: "city-stay-hotel-saffron-banquet")),
+                        vendor_id: "city-stay-hotel-saffron-banquet",id: "")),
               );
             },
             child: Container(
@@ -662,8 +683,8 @@ class BodyLayoutState extends State<BodyLayout> {
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.asset(
                         "images/makeup_image.jpg",
-                        width: 140,
-                        height: 170,
+                        width: 200,
+                        height: 190,
                         fit: BoxFit.cover,
                       )),
                 ),
@@ -840,7 +861,7 @@ class BodyLayoutState extends State<BodyLayout> {
                           builder: (context) => vendor_details(
                               url:
                                  image_url,
-                              vendor_id: item.email)),
+                              vendor_id: item.email,id: item.id,)),
                     );
                   },
                   child: Container(
@@ -932,7 +953,7 @@ class BodyLayoutState extends State<BodyLayout> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => vendor_details(url: API.CATEGORY_DETAILS_IMAGE1 + item.profilepic,
-                              vendor_id: item.email)),
+                              vendor_id: item.email,id: item.id)),
                     );
                   },
                   child: Column(
@@ -1132,14 +1153,12 @@ class BodyLayoutState extends State<BodyLayout> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>  SelectCityPage()),
-                          );
-
-                        },
+                                builder: (context) =>  const SelectCityPage()),
+                          );},
                         child: Column(
                           children: [
                             Container(
-                              margin: EdgeInsets.all(10.0),
+                              margin: const EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: GetColor.appPrimaryColors
@@ -1147,15 +1166,15 @@ class BodyLayoutState extends State<BodyLayout> {
                               ),
                               height: 60.0,
                               width: 60.0,
-                              child: Icon(Icons.read_more_rounded,color: Colors.black,),
+                              child: const Icon(Icons.read_more_rounded,color: Colors.black,),
                             ),
                             Container(
                                 margin:
-                                EdgeInsets.only(left: 10.0, right: 10.0),
-                                child: Align(
+                                const EdgeInsets.only(left: 10.0, right: 10.0),
+                                child: const Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text("More City",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           color: Colors.black),
                                     ))),

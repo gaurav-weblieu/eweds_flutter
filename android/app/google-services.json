@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "129321268071",
+    "project_id": "eweds-business",
+    "storage_bucket": "eweds-business.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129321268071:android:dc21eb61d043bc277035c2",
+        "android_client_info": {
+          "package_name": "com.eweds.planner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "129321268071-brejb2neokasc3r4avenmp2gc6ofaufh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9qmQvVPpmCLrZJa6NMNTy8naCm50bkdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "129321268071-brejb2neokasc3r4avenmp2gc6ofaufh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

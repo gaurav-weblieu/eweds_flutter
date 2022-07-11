@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 
 import 'LoadingOverlay.dart';
+import 'block/login_bloc.dart';
 import 'colors.dart';
 import 'dashboard.dart';
 import 'main.dart';
@@ -191,8 +192,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
                           if (await share_pre_temp.setTempData(data[0]["fname"]+" "+data[0]["lname"], data[0]["email"], data[0]["mobileno"])) {}
 
-                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                              DashboardPage()), (Route<dynamic> route) => false);
+                         /* Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                              DashboardPage()), (Route<dynamic> route) => false);*/
+
+                          LoginBloc loginBloc= LoginBloc();
+                          loginBloc.loginSink.add(true);
+
+                          Navigator.pop(context);
+                          Navigator.pop(context);
 
                         }
                         else {

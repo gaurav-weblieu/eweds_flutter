@@ -7,18 +7,25 @@ import 'package:dio/dio.dart';
 import 'package:multi_vendor_project/shared_pref.dart';
 import 'api.dart';
 import 'colors.dart';
+import 'image_show.dart';
 import 'login_copy.dart';
 import 'login_with_otp_screen.dart';
 import 'main.dart';
+import 'package:http/http.dart' as http;
+
+import 'model/photo_model.dart';
+
 
 class vendor_details extends StatefulWidget {
   var vendor_id;
 
-  vendor_details({Key? key, required this.url, required this.vendor_id}) : super(key: key);
+  var id;
+
+  vendor_details({Key? key, required this.url, required this.vendor_id,required this.id}) : super(key: key);
   final String url;
 
   @override
-  _vendor_detailsState createState() => _vendor_detailsState(url, vendor_id);
+  _vendor_detailsState createState() => _vendor_detailsState(url, vendor_id,id);
 }
 
 class _vendor_detailsState extends State<vendor_details> {
@@ -37,7 +44,11 @@ class _vendor_detailsState extends State<vendor_details> {
 
   var vendor_id;
 
-  _vendor_detailsState(this.url, this.vendor_id);
+  var is_image_avi=false;
+
+  var id;
+
+  _vendor_detailsState(this.url, this.vendor_id, this.id);
 
   @override
   void initState() {
@@ -111,6 +122,7 @@ class _vendor_detailsState extends State<vendor_details> {
             children: [
               Container(
                 margin: EdgeInsets.only(left: 10.0, right: 10.0),
+                color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -237,7 +249,7 @@ class _vendor_detailsState extends State<vendor_details> {
                                 child: FlatButton(
                                   onPressed: null,
                                   child: const Text(
-                                    'Send Message',
+                                    'Send Enquiry',
                                     style: TextStyle(
                                         color: GetColor.appPrimaryColors),
                                   ),
@@ -251,64 +263,38 @@ class _vendor_detailsState extends State<vendor_details> {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(left: 10.0),
-                              child: const Icon(
-                                Icons.call_rounded,
-                                size: 35,
-                                color: Colors.green,
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
                     ),
-                   /* Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 15.0, bottom: 5.0),
-                          child: Text(
-                            'Albums (1)',
-                            style: TextStyle(
-                                color: Colors.grey.shade700,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0),
-                          ),
-                        )),
-                    _myListView1(),*/
-                    /*Container(
-                      margin: const EdgeInsets.only(left: 70.0, right: 70.0),
-                      child: FlatButton(
-                        onPressed: null,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'See All Album',
-                              style:
-                                  TextStyle(color: GetColor.appPrimaryColors),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 15,
-                              color: GetColor.appPrimaryColors,
-                            ),
-                          ],
-                        ),
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                                color: GetColor.appPrimaryColors,
-                                width: 1,
-                                style: BorderStyle.solid),
-                            borderRadius: BorderRadius.circular(12)),
+                    Visibility(
+                      visible: is_image_avi,
+                      child: Column(
+                        children: [
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 15.0, bottom: 5.0),
+                                child: Text(
+                                  'Photos',
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0),
+                                ),
+                              )),
+                          Container(
+                              height: 200,
+                              child: newList()),
+                        ],
                       ),
-                    ),*/
+                    ),
+
                     Container(
                       margin: EdgeInsets.only(top: 15.0, bottom: 5.0),
                       child: Text(
-                        'About Sya Grand Club & Spa Resort',
+                        'About '+name,
                         style: TextStyle(
                             color: Colors.grey.shade700,
                             fontWeight: FontWeight.bold,
@@ -325,7 +311,7 @@ class _vendor_detailsState extends State<vendor_details> {
                             fontSize: 12.0),
                       ),
                     ),
-                    Container(
+                    /*Container(
                       margin: EdgeInsets.only(top: 15.0, bottom: 5.0),
                       child: Text(
                         'Been on Eweds Since',
@@ -344,7 +330,7 @@ class _vendor_detailsState extends State<vendor_details> {
                             fontWeight: FontWeight.w400,
                             fontSize: 12.0),
                       ),
-                    ),
+                    ),*/
                    /* Container(
                       margin: EdgeInsets.only(top: 15.0, bottom: 5.0),
                       child: Text(
@@ -707,6 +693,160 @@ class _vendor_detailsState extends State<vendor_details> {
 
   static String stripHtmlIfNeeded(String text) {
     return text.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ');
+  }
+
+
+  Widget newList(){
+    return Container(
+      //margin: EdgeInsets.only(top: 10.0),
+      height: double.infinity,
+      width: double.infinity,
+      child: FutureBuilder<List<PhotoData>>(
+        future: fetchPhotographer(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<PhotoData>? posts = snapshot.data;
+            return  ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final PhotoData listItem = posts!.elementAt(index);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ImageShow(imageUrl:API.VENDOR_IMAGE+listItem.pic_path)),
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(5.0),
+                      child: Stack(
+                        children :[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                              child: Image.network(
+                                API.VENDOR_IMAGE+listItem.pic_path,
+                                fit: BoxFit.fill,
+                                height: 170,
+                                width: 230,
+                              )),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+            );
+          } else if (snapshot.hasError) {
+            return const Text("Error");
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
+  }
+
+
+/*  Future<List<PhotoData>> GetAlbmumImage() async {
+
+    Response response;
+    response = await Dio().post(
+      API.get_vendor_photo_gallery,
+      data: {
+        "vid": "56",
+      },
+      options: Options(
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+      ),);
+
+
+
+
+    if (response.statusCode == 200) {
+      var dataList = PhotoModel.fromJson(jsonDecode(response.data));
+      return dataList.data;
+    } else {
+      // If that call was not successful (response was unexpected), it throw an error.
+      throw Exception('Failed to load post');
+    }
+  }*/
+
+
+  Future<List<PhotoData>> fetchPhotographer() async {
+
+
+    var dataList;
+    Response response;
+    try {
+      response = await Dio().post(
+        API.get_vendor_photo_gallery,
+        data: {
+          "vid": id,
+        },
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+        ),
+      );
+      if (response.statusCode != 200) {
+        //log(response.statusMessage.toString(),name: "Get Comment List API Failed");
+        MyApp.sMKey.currentState!
+            .showSnackBar(SnackBar(content: Text("Network not available")));
+        setState(() {
+          is_image_avi=false;
+        });
+        return dataList;
+      }
+      /*  if (response.statusCode == 200 && response.data['error'] != 0) {
+        log(response.statusMessage.toString(), name: "Get Comment List API Failed");
+        MyApp.sMKey.currentState!.showSnackBar(SnackBar(content: Text(response.data["message"])));
+        return false;
+      }*/
+    } on DioError catch (e) {
+      if (e.response == null) {
+        log(e.message.toString(), name: "Get Comment List API Error");
+        MyApp.sMKey.currentState!
+            .showSnackBar(SnackBar(content: Text("Network not available")));
+      } else {
+        log(e.response!.data.toString(), name: "Get Comment List API Error");
+        MyApp.sMKey.currentState!
+            .showSnackBar(SnackBar(content: Text("Network not available")));
+      }
+      setState(() {
+        is_image_avi=false;
+      });
+      return dataList;
+    }
+
+    try {
+
+      PhotoModel  photographerListData = PhotoModel.fromJson(jsonDecode(response.data));
+      if(photographerListData.status=="success"){
+        dataList = photographerListData.data;
+        setState(() {
+          is_image_avi=true;
+        });
+      }else{
+        setState(() {
+          is_image_avi=false;
+        });
+      }
+
+         return dataList;
+
+    } catch (e) {
+      setState(() {
+        is_image_avi=false;
+      });
+      log(e.toString(), name: "Get Comment List API Exception");
+      //  MyApp.sMKey.currentState!.showSnackBar(SnackBar(content: Text(e.toString())));
+      return dataList;
+    }
   }
 
 }

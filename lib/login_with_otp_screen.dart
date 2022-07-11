@@ -74,6 +74,7 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                   ),
                 ),
 
+
                 Container(
                   margin: const EdgeInsets.only(top: 15.0),
                   child: TextFormField(
@@ -92,14 +93,14 @@ class _LoginWithOtpState extends State<LoginWithOtp> {
                       isDense: true,
                       contentPadding: const EdgeInsets.fromLTRB(10, 25, 25, 0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(50.0),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: GetColor.appPrimaryColors,
-                        ),
+                        ),borderRadius: BorderRadius.all(Radius.circular(15.0))
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: GetColor.appPrimaryColors,
                         ),),

@@ -9,8 +9,13 @@ import 'package:multi_vendor_project/sharedpre_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'block/login_bloc.dart';
+import 'book_mark_page.dart';
 import 'contact_us_page.dart';
 import 'login_with_otp_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_share/flutter_share.dart';
+
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -26,6 +31,12 @@ class _SettingScreenState extends State<SettingScreen> {
 
    String var_final_image="https://www.eweds.in/uploads/blog/gurgaon-venue/front.png";
 
+  String? _user_id;
+
+  final Uri _url = Uri.parse('https://play.google.com/store/apps/details?id=com.eweds.planner');
+
+
+final loginbloc=LoginBloc();
 
 
   @override
@@ -37,17 +48,8 @@ class _SettingScreenState extends State<SettingScreen> {
             onTap: () {
               checkLogin().then((value) {
                 if (value) {
-                  /*Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const ProfilePage()),
-                  );*/
-
-                  Route route = MaterialPageRoute(builder: (context) => ProfilePage());
+                  Route route = MaterialPageRoute(builder: (context) => const ProfilePage());
                   Navigator.push(context, route).then(setTempDate);
-
-
                 } else {
                   Navigator.push(
                     context,
@@ -58,42 +60,47 @@ class _SettingScreenState extends State<SettingScreen> {
                 }
               });
             },
-            child: Container(
-              color: GetColor.appPrimaryColors,
-              height: 100.0,
-              child: is_login ?  Row(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child:  Container(
-                      margin: const EdgeInsets.only(top: 22.0),
-                        width: 80.0,
-                        height: 100.0,
-                        child: Center(child: Lottie.asset('images/robot_hello.json',height: 250.0,width: 250.0)))
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 45.0,left: 25.0),
-                    child: Align(
+            child: StreamBuilder(
+              stream: loginbloc.loginStream,
+              builder: (context, snapshot) {
+                checkLogin();
+                return Container(
+                color: GetColor.appPrimaryColors,
+                height: 100.0,
+                child: is_login ?  Row(
+                  children: [
+                    Align(
                       alignment: Alignment.center,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children:  [
-                          Text("Hello, "+var_final_name,
-                                  style: const TextStyle(fontSize: 16.0,color: Colors.white,
-                                  fontWeight: FontWeight.w600),),
-                          Container(
-                              margin: const EdgeInsets.only(top: 5.0),
-
-                              child: const Text("View Profile",style: TextStyle(fontSize: 12.0,color: Colors.white),)),
-                        ],
-                      ),
+                      child:  Container(
+                        margin: const EdgeInsets.only(top: 22.0),
+                          width: 80.0,
+                          height: 100.0,
+                          child: Center(child: Lottie.asset('images/robot_hello.json',height: 250.0,width: 250.0)))
                     ),
-                  )
-                ],
-              ) : const Center(
-                child: Text("Login Please"),
-              )
+                    Container(
+                      margin: const EdgeInsets.only(top: 45.0,left: 25.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children:  [
+                            Text("Hello, "+var_final_name,
+                                    style: const TextStyle(fontSize: 16.0,color: Colors.white,
+                                    fontWeight: FontWeight.w600),),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5.0),
+
+                                child: const Text("View Profile",style: TextStyle(fontSize: 12.0,color: Colors.white),)),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ) : const Center(
+                  child: Text("Login Please"),
+                )
+              );},
             ),
           ),
           GestureDetector(
@@ -102,11 +109,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        AboutUs()),
+                        const AboutUs()),
               );
             },
             child: Container(
-              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 35.0),
+              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 20.0),
               child: Column(
                 children: [
                   Row(
@@ -124,36 +131,12 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(left: 20.0,right: 20.0),
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 10.0),
             child: const Divider(
               thickness: 1.0,
             ),
           ),
 
-
-         /* Container(
-            margin: EdgeInsets.only(left: 20.0,right: 20.0,top: 15.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.reviews_rounded,color: GetColor.appPrimaryColors,size: 18.0,
-                    ),
-                    Container(
-                        margin: const EdgeInsets.only(left: 10.0),
-                        child: const Text("Write Review",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)),
-                  ],
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 5.0),
-            child: const Divider(
-              thickness: 1.0,
-            ),
-          ),*/
 
           GestureDetector(
             onTap: (){
@@ -161,11 +144,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ContactUs()),
+                        const ContactUs()),
               );
             },
             child: Container(
-              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 15.0),
+              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 10.0),
               child: Column(
                 children: [
                   Row(
@@ -182,33 +165,75 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
           ),
+
+
           Container(
-            margin: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 5.0),
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 10.0),
+            child: const Divider(
+              thickness: 1.0,
+            ),
+          ),
+
+          GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        book_mark_page(user_id: _user_id,)),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 10.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.bookmark,color: GetColor.appPrimaryColors,size: 18.0,
+                      ),
+                      Container(
+                          margin: const EdgeInsets.only(left: 10.0),
+                          child: const Text("Saved Vendors",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 5.0,top: 10.0),
             child: const Divider(
               thickness: 1.0,
             ),
           ),
 
 
-          Container(
-            margin: EdgeInsets.only(left: 20.0,right: 20.0,top: 15.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.share,color: GetColor.appPrimaryColors,size: 18.0,
-                    ),
-                    Container(
-                        margin: const EdgeInsets.only(left: 10.0),
-                        child: const Text("Share App",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)),
-                  ],
-                )
-              ],
+          GestureDetector(
+            onTap: ()  {
+              share();
+            },
+            child: Container(
+              margin: const EdgeInsets.only(left: 20.0,right: 20.0,top: 10.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.share,color: GetColor.appPrimaryColors,size: 18.0,
+                      ),
+                      Container(
+                          margin: const EdgeInsets.only(left: 10.0),
+                          child: const Text("Share App",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),)),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 30.0),
+            margin: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 30.0,top: 10.0),
             child: const Divider(
               thickness: 1.0,
             ),
@@ -219,11 +244,20 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'Eweds App',
+        text: 'Check out this new , Wedding Planner App',
+        linkUrl: 'https://play.google.com/store/apps/details?id=com.eweds.planner',
+        chooserTitle: 'Eweds'
+    );
+  }
+
   Future<bool> checkLogin() async {
 
     bool isLogin;
-    shared_pref s_f = new shared_pref();
-    String? _uid = await s_f.getUid();
+    shared_pref sF = shared_pref();
+    String? _uid = await sF.getUid();
     if ((_uid != null)) {
       isLogin = true;
       setState(() {
@@ -242,6 +276,19 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     checkLogin();
     setTempDate(0);
+    getUserID().then((value) {
+      _user_id=value;
+    });
+  }
+
+  Future<String?> getUserID() async {
+    shared_pref sF= shared_pref();
+    String? _uid = await sF.getUid();
+    return _uid;
+  }
+
+  void _launchUrl() async {
+    if (! await launchUrl(_url)) throw 'Could not launch $_url';
   }
 
 

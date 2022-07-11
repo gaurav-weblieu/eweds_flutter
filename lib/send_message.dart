@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:multi_vendor_project/shared_pref_temp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -9,6 +10,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'api.dart';
 import 'colors.dart';
+import 'complete_request_screen.dart';
 import 'main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +43,8 @@ class _SendEnqueryState extends State<SendEnquery> {
   SharedPrefTemp share_pre_temp= SharedPrefTemp();
 
   bool value = false;
+
+  bool is_complete_request=false;
 
 
 
@@ -87,6 +91,7 @@ class _SendEnqueryState extends State<SendEnquery> {
       } else if (args.value is DateTime) {
       //  _selectedDate = args.value.toString();
         _selectedDate = DateFormat('dd/MM/yyyy').format(args.value);
+        Navigator.pop(context);
       } else if (args.value is List<DateTime>) {
         _dateCount = args.value.length.toString();
       } else {
@@ -100,11 +105,11 @@ class _SendEnqueryState extends State<SendEnquery> {
     return Scaffold(
       appBar:  AppBar(
         iconTheme: const IconThemeData(
-          color: GetColor.appPrimaryColors, //change your color here
+          color: Colors.white, //change your color here
         ),
         elevation: 2.0,
-        backgroundColor: Colors.white,
-        title: const Text("Send Message",style: TextStyle(color: GetColor.appPrimaryColors,fontSize: 16),),
+        backgroundColor: GetColor.appPrimaryColors,
+        title: const Text("Send Enquiry",style: TextStyle(color: Colors.white,fontSize: 16),),
 
       ),
         backgroundColor: Colors.white,
@@ -114,7 +119,7 @@ class _SendEnqueryState extends State<SendEnquery> {
             child: Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  margin: const EdgeInsets.only(left: 10.0, right: 10.0,top: 10.0),
                   child: Column(
                     children: [
                      /* Container(
@@ -256,7 +261,7 @@ class _SendEnqueryState extends State<SendEnquery> {
                             child: Text(
                               _selectedDate,
                               style:
-                              const TextStyle(color: Colors.grey, fontSize: 16.0),
+                              const TextStyle(color: Colors.black, fontSize: 16.0,),
                             ),
                           ),
                         ),
@@ -270,11 +275,9 @@ class _SendEnqueryState extends State<SendEnquery> {
 
 
                       Container(
-                        margin: EdgeInsets.only(top: 15.0),
+                        margin: EdgeInsets.only(top: 10.0),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-
                             Checkbox(
                               checkColor: Colors.white,
                               activeColor: GetColor.appPrimaryColors,
@@ -290,7 +293,7 @@ class _SendEnqueryState extends State<SendEnquery> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Send Me Details on WhatsApp",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400,),),
+                                  const Text("Send me details on WhatsApp",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w400,),),
                                 ],
                               ),
                             ),
@@ -369,6 +372,7 @@ class _SendEnqueryState extends State<SendEnquery> {
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
+                          height: 40.0,
                           margin: const EdgeInsets.only(top: 50.0),
                           child: ElevatedButton(
                             onPressed: () {
@@ -380,7 +384,7 @@ class _SendEnqueryState extends State<SendEnquery> {
                               minimumSize: const Size.fromHeight(50),
 
                             ),
-                            child: const Text('Send Message'),
+                            child: const Text('Send Enquiry'),
                           ),
                         ),
                       ),
@@ -389,9 +393,11 @@ class _SendEnqueryState extends State<SendEnquery> {
                       Align(
                         alignment: Alignment.center,
                         child: Container(
-                          margin: const EdgeInsets.only(top: 5.0, bottom: 50.0),
+                          margin: const EdgeInsets.only(top: 15.0, bottom: 50.0),
                           child: Center(
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
                                 Text("By Clicking Send Message you are agree on our ",
                                   style: TextStyle(color: Colors.grey,fontWeight: FontWeight.w400,fontSize: 12.0),),
@@ -598,9 +604,6 @@ class _SendEnqueryState extends State<SendEnquery> {
                             child: GestureDetector(
                               onTap: (){
                                 Navigator.pop(context);
-                                setState(() {
-                                  no_of_guest;
-                                });
                               },
                               child: const Text(
                                 'Save',
@@ -626,6 +629,57 @@ class _SendEnqueryState extends State<SendEnquery> {
               ],
             ),
           );
+        });
+  }
+
+  void exitScreen(){
+    Future.delayed(const Duration(seconds: 4), () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+  }
+
+
+  showBottomDateStatus() {
+
+
+    exitScreen();
+
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius:BorderRadius.circular(10.0)
+        ),
+    builder: (context) {
+    return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState /*You can rename this!*/) {
+    return Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+              child:  Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      margin: const EdgeInsets.only(top: 22.0),
+                      child: Center(child: Lottie.asset('images/complete_req.json',height: 250.0,width: 250.0))),
+                  Container(
+                    margin: EdgeInsets.only(top: 35.0),
+                    child: const Center(child: Text("Enquiry submitted Successfully",style: TextStyle(fontSize: 21.0,
+                        color: Colors.black,fontWeight: FontWeight.bold),)),
+                  ),
+
+                  Container(
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: const Center(child: Text("Vendor will contact you soon",style: TextStyle(fontSize: 16.0,color: Colors.black
+                        ,fontWeight: FontWeight.bold),)),
+                  )
+                ],
+              )
+            ),
+          );});
         });
   }
 
@@ -699,8 +753,16 @@ class _SendEnqueryState extends State<SendEnquery> {
           if (check == "success") {
 
             if (await share_pre_temp.setTempData(name.text, email.text, phone.text)) {
-              MyApp.sMKey.currentState!.showSnackBar(const SnackBar(content: Text("Enquery Send Successfully!!!")));
-              Navigator.pop(context);
+             // MyApp.sMKey.currentState!.showSnackBar(const SnackBar(content: Text("Enquery Send Successfully!!!")));
+              /*Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CompleteRequestPage()),
+              );*/
+
+              showBottomDateStatus();
+
             }
 
           } else {
